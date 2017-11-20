@@ -1,5 +1,6 @@
 package bancoGUI;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,16 +15,13 @@ public class DAOUsuario {
 
     //salvar
     public int salvarUsuario(Usuario usuario) {
-        // Instrução SQL que será executada no banco
         String sql = "INSERT "
                 + "INTO "
                 + "tb_usuario (nome, sobrenome)"
                 + "VALUES (?, ?)";
         try {
-            // Objeto PreparedStatement é um objeto que prepara a instrução de sql
-            // ou seja, preenche os valores
+
             PreparedStatement preparacaoDaInstrucao = conexao.prepareStatement(sql);
-            //De acordo com a posicao do ponto de interrogacao na SQL e o tipo do dado
             preparacaoDaInstrucao.setString(1, usuario.getNome());
             preparacaoDaInstrucao.setString(2, usuario.getSobrenome());
 
@@ -34,20 +32,21 @@ public class DAOUsuario {
             return -1;
         }
     }
+
     //listar
     public List<Usuario> listarUsuarios() {
         List<Usuario> listaParaRetorno = new ArrayList<Usuario>();
-        String sql = "SELECT * FROM tb_usuario";
-
+        String sql = "SELECT * FROM tb_usuario ORDER BY id_usuario ASC";
         try {
             PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
             ResultSet resultado = instrucaoSelecao.executeQuery();
 
             while (resultado.next()) {
-                Usuario usu = new Usuario();
-                usu.setNome(resultado.getString("nome"));
-                usu.setSobrenome(resultado.getString("Sobrenome"));
-                listaParaRetorno.add(usu);
+                Usuario usuario = new Usuario();
+                usuario.setIdUsuario(resultado.getInt("id_usuario"));
+                usuario.setNome(resultado.getString("nome"));
+                usuario.setSobrenome(resultado.getString("sobrenome"));
+                listaParaRetorno.add(usuario);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAOUsuario.class.getName()).log(Level.SEVERE, null, ex);
@@ -57,13 +56,41 @@ public class DAOUsuario {
     }
 
     //excluir
-    public boolean excluirUsuario(Usuario usuario) {
-        return false;
+    public void excluirUsuario(Usuario usuario) {
+        String sql = "DELETE FROM tb_usuario WHERE id_usuario=?";
+
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setInt(1, usuario.getidUsuario());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuário removido com sucesso");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
+
     //atualizar
-    public boolean atualizarUsuario(Usuario usuario) {
-        return false;
+    public void editarUsuario(Usuario usuario) {
+        String sql = "UPDATE tb_usuario SET nome=?, sobrenome=? WHERE id_usuario=?";
+
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setString(1, usuario.getNome());
+            conectar.setString(2, usuario.getSobrenome());
+            conectar.setInt(3, usuario.getidUsuario());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuário alterado com sucesso!");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
+
+
+
 
 

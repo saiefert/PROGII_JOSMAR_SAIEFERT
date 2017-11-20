@@ -17,6 +17,7 @@ public class Connect {
 
         try {
             conexao = DriverManager.getConnection(URL_BANCO, USUARIO, SENHA);
+            return conexao;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -25,10 +26,6 @@ public class Connect {
         else
             status = "Não conectado";
         return conexao;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
 }

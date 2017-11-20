@@ -11,5 +11,3 @@ public class Main {
         painel.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     }
 }
-
-

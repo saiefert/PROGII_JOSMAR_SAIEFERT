@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="PROGII_JOSMAR_SAIEFERT" target="1.5" />
+      <module name="PROGII_JOSMAR_SAIEFERT" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

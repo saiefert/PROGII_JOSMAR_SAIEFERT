@@ -1,12 +1,17 @@
 package bancoGUI;
 
-import java.util.Scanner;
-
 public class Usuario {
     private String nome;
     private String sobrenome;
+    private int idUsuario;
 
-    Scanner sc = new Scanner(System.in);
+    public int getidUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 
     public void setNome(String nome) {
         this.nome = nome;
