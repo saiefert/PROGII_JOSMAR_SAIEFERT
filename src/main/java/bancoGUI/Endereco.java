@@ -1,11 +1,20 @@
 package bancoGUI;
 
 public class Endereco {
+    int idEndereco;
     String logradouro;
     String bairro;
     String numero;
     String cep;
     String complemento;
+
+    public int getIdEndereco() {
+        return idEndereco;
+    }
+
+    public void setIdEndereco(int idEndereco) {
+        this.idEndereco = idEndereco;
+    }
 
     public String getLogradouro() {
         return logradouro;

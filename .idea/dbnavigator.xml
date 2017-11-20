@@ -26,7 +26,7 @@
     <loaded-nodes>
       <connection connection-id="800f446e-5935-4549-926c-85f2e12fab82">
         <schema name="pg_catalog" object-types="function, table, view" />
-        <schema name="public" object-types="column, function, table, view" />
+        <schema name="public" object-types="function, table, view" />
       </connection>
     </loaded-nodes>
   </component>
@@ -37,6 +37,9 @@
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
+  </component>
+  <component name="DBNavigator.Project.FileConnectionMappingManager">
+    <mapping file-url="file://$PROJECT_DIR$/sql/banco.sql" connection-id="800f446e-5935-4549-926c-85f2e12fab82" current-schema="public" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />

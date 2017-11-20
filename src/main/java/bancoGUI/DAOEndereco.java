@@ -1,5 +1,6 @@
 package bancoGUI;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -60,13 +61,36 @@ public class DAOEndereco {
     }
 
     //excluir
-    public boolean excluirUsuario(Usuario usuario) {
-        return false;
-    }
+    public void excluirEndereco(Endereco endereco) {
+        String sql = "DELETE FROM tb_usuario WHERE id_usuario=?";
 
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setInt(1, endereco.getIdEndereco());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Endereço removido com sucesso");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
     //atualizar
-    public boolean atualizarUsuario(Usuario usuario) {
-        return false;
+    public void editarUsuario(Usuario usuario) {
+        String sql = "UPDATE tb_usuario SET nome=?, sobrenome=? WHERE id_usuario=?";
+
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setString(1, usuario.getNome());
+            conectar.setString(2, usuario.getSobrenome());
+            conectar.setInt(3, usuario.getidUsuario());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuário alterado com sucesso!");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
 

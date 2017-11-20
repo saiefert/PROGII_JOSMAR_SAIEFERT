@@ -10,18 +10,20 @@ import java.awt.event.ActionListener;
 
 public class InterfaceGrafica extends JFrame implements ActionListener {
 
+
     private JMenuBar barraDeMenu;
-    private JMenu novo, gerenciar;
-    private JMenuItem cadastro;
+    private JMenu barraMenu, gerenciar;
+    private JMenuItem cadastroUsuarioEndereco, cadastrarPerfil;
     private JMenuItem listarUsuarios, buscarEnderecos;
-    private JButton sobre, salvarBanco, editarUsuario, excluirUsuario;
+    private JButton sobre, salvarBanco, salvarBancoPerfil ,editarUsuario, excluirUsuario;
     private JTextField nomeUsuario, sobrenomeUsuario, logradouro, complemento, bairro, numero, cep, nomePerfil, descricaoPerfil;
     private JLabel sucesso, nomeUsuarioLabel, sobrenomeUsuarioLabel, logradouroLabel, complementoLabel, bairroLabel, numeroLabel, cepLabel;
     private JLabel nomePerfilLabel, descricaoPerfilLabel, alertaSalvarUsuario;
-    private JFrame cadastroJframe, buscaUsuarioPainel;
+    private JFrame cadastroUsuarioEnderecoJframe, cadastroPerfilJframe, buscaUsuarioPainel;
     private JFrame editaExcluiPainel;
     private JTable tabela;
     private JPanel painelEditarExcluir;
+    private JScrollPane perfilOpcoes;
     DefaultTableModel tabelaUsuario = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
             return column == 1 || column == 2 ? true : false;
@@ -34,85 +36,83 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         this.setJMenuBar(barraDeMenu);
 
         //Novo > Cadastro
-        novo = new JMenu("Novo");
-        cadastro = new JMenuItem("Cadastro");
-        barraDeMenu.add(novo);
-        novo.add(cadastro);
-        cadastroJframe = new JFrame("Cadastro");
+        barraMenu = new JMenu("Novo");
+        cadastroUsuarioEndereco = new JMenuItem("Usuário");
+        cadastrarPerfil = new JMenuItem("Perfil");
+        barraDeMenu.add(barraMenu);
+        barraMenu.add(cadastroUsuarioEndereco);
+        barraMenu.add(cadastrarPerfil);
+        cadastroUsuarioEnderecoJframe = new JFrame("Cadastror Usuário e endereço");
+        cadastroPerfilJframe = new JFrame("Cadastrar perfil");
 
+        //Usuárioc e Endereço
         //Usuário
         TitledBorder tituloUsuario = new TitledBorder("Usuário");
+        salvarBanco = new JButton("Cadastrar");
         JPanel usuarioJpane = new JPanel();
         usuarioJpane.setBorder(tituloUsuario);
-        cadastroJframe.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
-        cadastroJframe.add(usuarioJpane);
-
+        cadastroUsuarioEnderecoJframe.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        cadastroUsuarioEnderecoJframe.add(usuarioJpane);
         nomeUsuario = new JTextField(15);
         nomeUsuarioLabel = new JLabel("Nome:");
         sobrenomeUsuario = new JTextField(25);
         sobrenomeUsuarioLabel = new JLabel("Sobrenome:");
-
         usuarioJpane.add(nomeUsuarioLabel);
         usuarioJpane.add(nomeUsuario);
         usuarioJpane.add(sobrenomeUsuarioLabel);
         usuarioJpane.add(sobrenomeUsuario);
-
-        //Endereço
+        //Endereço:
         TitledBorder tituloEndereco = new TitledBorder("Endereço");
         JPanel enderecoJpane = new JPanel(new GridLayout(3, 1));
         enderecoJpane.setBorder(tituloEndereco);
-        cadastroJframe.add(enderecoJpane);
+        cadastroUsuarioEnderecoJframe.add(enderecoJpane);
         logradouroLabel = new JLabel("Logradouro");
         complementoLabel = new JLabel("Complemento");
         bairroLabel = new JLabel("Bairro: ");
         numeroLabel = new JLabel("Numero: ");
         cepLabel = new JLabel("Cep:");
-
         logradouro = new JTextField(31);
         complemento = new JTextField(46);
         bairro = new JTextField(36);
         numero = new JTextField(10);
         cep = new JTextField(10);
-
         JPanel logradouroNumero = new JPanel();
         JPanel bairroCep = new JPanel();
         JPanel comple = new JPanel();
-
         enderecoJpane.add(logradouroNumero);
         enderecoJpane.add(bairroCep);
         enderecoJpane.add(comple);
-
         logradouroNumero.add(logradouroLabel, BorderLayout.NORTH);
         logradouroNumero.add(logradouro, BorderLayout.NORTH);
         logradouroNumero.add(numeroLabel, BorderLayout.NORTH);
         logradouroNumero.add(numero, BorderLayout.NORTH);
-
         bairroCep.add(bairroLabel, BorderLayout.CENTER);
         bairroCep.add(bairro, BorderLayout.CENTER);
         bairroCep.add(cepLabel, BorderLayout.CENTER);
         bairroCep.add(cep, BorderLayout.CENTER);
-
         comple.add(complementoLabel, BorderLayout.SOUTH);
         comple.add(complemento, BorderLayout.SOUTH);
+        cadastroPerfilJframe.add(perfilOpcoes);
+        cadastroUsuarioEnderecoJframe.add(salvarBanco);
+
+
 
         //Perfil
         TitledBorder tituloPerfil = new TitledBorder("Perfil");
         JPanel perfilJpane = new JPanel();
         perfilJpane.setBorder(tituloPerfil);
-        cadastroJframe.add(perfilJpane);
-
+        cadastroPerfilJframe.add(perfilJpane);
         nomePerfil = new JTextField(15);
         nomePerfilLabel = new JLabel("Nome:");
-        descricaoPerfil = new JTextField(25);
+        descricaoPerfil = new JTextField(30);
         descricaoPerfilLabel = new JLabel("Descrição:");
-
         perfilJpane.add(nomePerfilLabel);
         perfilJpane.add(nomePerfil);
         perfilJpane.add(descricaoPerfilLabel);
         perfilJpane.add(descricaoPerfil);
+        salvarBancoPerfil = new JButton("Cadastrar");
+        perfilJpane.add(salvarBancoPerfil);
 
-        salvarBanco = new JButton("Cadastrar");
-        cadastroJframe.add(salvarBanco);
 
         //Menu Gerenciar
         gerenciar = new JMenu("Gerenciar");
@@ -123,7 +123,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         gerenciar.add(buscarEnderecos);
 
         //Tabela/Listar
-        buscaUsuarioPainel = new JFrame("Consultar cadastro de usuário");
+        buscaUsuarioPainel = new JFrame("Consultar cadastroUsuarioEndereco de usuário");
 
         tabela = new JTable(tabelaUsuario);
         tabela.setGridColor(Color.LIGHT_GRAY);
@@ -154,17 +154,19 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         sobre.setContentAreaFilled(false);
         sobre.setBorderPainted(false);
 
-        editaExcluiPainel = new JFrame("Editar/Excluir cadastro");
+        editaExcluiPainel = new JFrame("Editar/Excluir cadastroUsuarioEndereco");
 
         //Coloque o caminho da imagem aqui:
-        ImageIcon imagem = new ImageIcon("C:\\Users\\Josmar\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
+        ImageIcon imagem = new ImageIcon("C:\\Users\\SAIEFERT.FINANCIAL\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
         JLabel imageLabel = new JLabel(imagem);
         this.add(imageLabel);
 
         //Listerners
-        cadastro.addActionListener(this);
+        cadastroUsuarioEndereco.addActionListener(this);
+        cadastrarPerfil.addActionListener(this);
         listarUsuarios.addActionListener(this);
         salvarBanco.addActionListener(this);
+        salvarBancoPerfil.addActionListener(this);
         buscarEnderecos.addActionListener(this);
         sobre.addActionListener(this);
         editarUsuario.addActionListener(this);
@@ -185,14 +187,11 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         if (evento.getSource() == salvarBanco) {
             Usuario usuario = new Usuario();
             Endereco endereco = new Endereco();
-            Perfil perfil = new Perfil();
             DAOUsuario usuarioDao = new DAOUsuario();
             DAOEndereco enderecoDao = new DAOEndereco();
-            DAOPerfil perfilDao = new DAOPerfil();
 
             String nome, usuarioSobrenome;
             String enderecoLogradouro, enderecoComplemento, enderecoBairro, enderecoNumero, enderecoCep;
-            String perfilNome, perfilDescricao;
             nome = nomeUsuario.getText();
             enderecoLogradouro = logradouro.getText();
             enderecoComplemento = complemento.getText();
@@ -200,8 +199,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             enderecoNumero = numero.getText();
             enderecoCep = cep.getText();
             usuarioSobrenome = sobrenomeUsuario.getText();
-            perfilNome = nomePerfil.getText();
-            perfilDescricao = descricaoPerfil.getText();
 
             if (usuarioSobrenome.isEmpty() || nome.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Preencha todos os campos de usuário!", "" +
@@ -216,11 +213,26 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 endereco.setComplemento(enderecoComplemento);
                 endereco.setCep(enderecoCep);
                 enderecoDao.salvarEndereco(endereco);
+                JOptionPane.showMessageDialog(this, "Usuário\n" + nome + " " +
+                        usuarioSobrenome + " incluído com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
+            }
+        }else if (evento.getSource() == salvarBancoPerfil) {
+            Perfil perfil = new Perfil();
+            DAOPerfil perfilDao = new DAOPerfil();
+
+            String perfilNome, perfilDescricao;
+            perfilNome = nomePerfil.getText();
+            perfilDescricao = descricaoPerfil.getText();
+
+            if (perfilDescricao.isEmpty() || perfilNome.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Preencha todos os campos de perfil!", "" +
+                        "Não foi possível salvar", JOptionPane.PLAIN_MESSAGE);
+            } else {
                 perfil.setNome(perfilNome);
                 perfil.setDescricao(perfilDescricao);
                 perfilDao.salvarPerfil(perfil);
-                JOptionPane.showMessageDialog(this, "Usuário\n" + nome + " " +
-                        usuarioSobrenome + " incluído com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Usuário\n" + perfilNome +
+                        " incluído com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
             }
         }
         //Botão Sobre
@@ -234,14 +246,21 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                     "", "Sobre", JOptionPane.PLAIN_MESSAGE);
 
             //Submenu cadastrar
-        } else if (evento.getSource() == cadastro) {
-            cadastroJframe.setVisible(true);
-            cadastroJframe.setSize(680, 480);
-            cadastroJframe.setLocationRelativeTo(null);
-            cadastroJframe.setResizable(false);
-            cadastroJframe.setVisible(true);
+        } else if (evento.getSource() == cadastroUsuarioEndereco) {
+            cadastroUsuarioEnderecoJframe.setVisible(true);
+            cadastroUsuarioEnderecoJframe.setSize(680, 480);
+            cadastroUsuarioEnderecoJframe.setLocationRelativeTo(null);
+            cadastroUsuarioEnderecoJframe.setResizable(false);
+            cadastroUsuarioEnderecoJframe.setVisible(true);
 
             //Submenu Consultar
+        } else if (evento.getSource() == cadastrarPerfil) {
+            cadastroPerfilJframe.setVisible(true);
+            cadastroPerfilJframe.setSize(680, 480);
+            cadastroPerfilJframe.setLocationRelativeTo(null);
+            cadastroPerfilJframe.setResizable(false);
+            cadastroPerfilJframe.setVisible(true);
+            //submenu cadastrar perfil
         } else if (evento.getSource() == listarUsuarios) {
             pesquisar(tabelaUsuario);
             buscaUsuarioPainel.setVisible(true);
