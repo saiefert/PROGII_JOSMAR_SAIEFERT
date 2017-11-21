@@ -56,10 +56,32 @@ public class DAOPerfil {
         return listaParaRetorno;
     }
 
+    public List<Perfil> listarPerfilUsuario() {
+        List<Perfil> listaParaRetorno = new ArrayList<Perfil>();
+        String sql = "SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario INNER" +
+                " JOIN tb_perfil ON tb_usuario.id_usu = tb_perfil.id_perfil";
 
-    //SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario INNER
-    //JOIN tb_perfil ON
-    //tb_usuario.id_usu = tb_perfil.id_perfil
+        try {
+            PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
+            ResultSet resultado = instrucaoSelecao.executeQuery();
+
+            while (resultado.next()) {
+                Usuario usuario = new Usuario();
+                Perfil perfil = new Perfil();
+                //perfil.setIdPerfil(resultado.getInt("id_perfil"));
+                perfil.setNome(resultado.getString("nome"));
+                perfil.setDescricao(resultado.getString("descricao"));
+                usuario.setIdUsuario(resultado.getInt("id_usuario"));
+                usuario.setNome(resultado.getString("nome"));
+                usuario.setSobrenome(resultado.getString("sobrenome"));
+                listaParaRetorno.add(perfil);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOUsuario.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return listaParaRetorno;
+    }
 
     //excluir
     public void excluirPerfil(Perfil perfil) {

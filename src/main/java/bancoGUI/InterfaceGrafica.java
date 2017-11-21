@@ -1,7 +1,5 @@
 package bancoGUI;
 
-import jdk.nashorn.internal.scripts.JO;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -14,17 +12,17 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 
 
     private JMenuBar barraDeMenu;
-    private JMenu barraMenu, gerenciar;
+    private JMenu barraMenu, gerenciar, consultar;
     private JMenuItem cadastroUsuarioMaisEnderecoJmenu, cadastrarPerfilJmenu;
-    private JMenuItem listarUsuariosJmenu, listarEnderecosJmenu, listarPerfilJmenu;
+    private JMenuItem listarUsuariosJmenu, listarEnderecosJmenu, listarPerfilJmenu, listarPorPerfilJMenu;
     private JButton salvarBancoPerfil, editarUsuario, excluirUsuario, excluirEndereco, editarEndereco, editarPerfil, excluirPerfil;
     private JButton sobre, salvarBanco;
     private JTextField nomeUsuario, sobrenomeUsuario, logradouro, complemento, bairro, numero, cep, nomePerfil, descricaoPerfil;
     private JLabel sucesso, nomeUsuarioLabel, sobrenomeUsuarioLabel, logradouroLabel, complementoLabel, bairroLabel, numeroLabel, cepLabel;
     private JLabel nomePerfilLabel, descricaoPerfilLabel, alertaSalvarLabel, perfilAlertaLabel, selecionarPerfilLabel;
     private JFrame cadastroUsuarioEnderecoJframe, cadastroPerfilJframe;
-    private JFrame listarEnderecosJframe, listaUsuarioJframe, listarPerfilJframe;
-    private JTable tabelaUser, tabelaEnd, tabelaPerf;
+    private JFrame listarEnderecosJframe, listaUsuarioJframe, listarPerfilJframe, listarPorPerfilJframe;
+    private JTable tabelaUser, tabelaEnd, tabelaPerf, tabelaPorPerf;
     private JPanel painelEditarExcluirUsuario, painelEditarExcluirEndereco, painelEditarExcluirPerfil;
     private static JComboBox perfilOpcoes;
 
@@ -37,6 +35,12 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
     DefaultTableModel tabelaEndereco = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
             return column == 1 || column == 2 || column == 3 || column == 4 || column == 5 ? true : false;
+        }
+    };
+
+    DefaultTableModel tabelaListaPorPerfil = new DefaultTableModel() {
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
     };
 
@@ -71,7 +75,12 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         gerenciar.add(listarEnderecosJmenu);
         gerenciar.add(listarPerfilJmenu);
 
-       //Usuário Jframe (Cadastro)
+        consultar = new JMenu("Consultar");
+        listarPorPerfilJMenu = new JMenuItem("Usuarios no perfil");
+        consultar.add(listarPorPerfilJMenu);
+        barraDeMenu.add(consultar);
+
+        //Usuário Jframe (Cadastro)
         TitledBorder tituloUsuario = new TitledBorder("Usuário");
         salvarBanco = new JButton("Cadastrar");
         JPanel usuarioJpane = new JPanel();
@@ -143,7 +152,20 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         perfilAlertaLabel.setForeground(Color.lightGray);
         perfilJpane.add(perfilAlertaLabel);
 
-
+        //Usuarios no perfil (Consultar)
+        listarPorPerfilJframe = new JFrame("Usuarios relacionados por perfil");
+        tabelaPorPerf = new JTable(tabelaListaPorPerfil);
+        tabelaPorPerf.setGridColor(Color.LIGHT_GRAY);
+        tabelaPorPerf.setShowVerticalLines(false);
+        tabelaListaPorPerfil.addColumn("Nome");
+        tabelaListaPorPerfil.addColumn("Sobrenome");
+        tabelaListaPorPerfil.addColumn("Perfil");
+        tabelaPorPerf.getColumnModel().getColumn(0).setPreferredWidth(5);
+        tabelaPorPerf.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaPorPerf.getColumnModel().getColumn(2).setPreferredWidth(100);
+        listarPorPerfilJframe.setLayout(new BorderLayout());
+        JScrollPane barraRolagemPorPerfil = new JScrollPane(tabelaPerf);
+        listarPorPerfilJframe.add(BorderLayout.CENTER, barraRolagemPorPerfil);
 
         //Tabela Usuário
         listaUsuarioJframe = new JFrame("Consultar usuários");
@@ -221,6 +243,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         JScrollPane barraRolagemPerfil = new JScrollPane(tabelaPerf);
         listarPerfilJframe.add(BorderLayout.CENTER, barraRolagemPerfil);
         listarPerfilJframe.add(alertaSalvarLabel, BorderLayout.NORTH);
+        listarPorPerfilJframe.add(tabelaPorPerf);
 
         //Botão Sobre
         sobre = new JButton("Sobre");
@@ -230,7 +253,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         sobre.setBorderPainted(false);
 
         //Coloque o caminho da imagem aqui:
-        ImageIcon imagem = new ImageIcon("C:\\Users\\SAIEFERT.FINANCIAL\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
+        ImageIcon imagem = new ImageIcon("C:\\Users\\Josmar\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
         JLabel imageLabel = new JLabel(imagem);
         this.add(imageLabel);
 
@@ -239,6 +262,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         cadastrarPerfilJmenu.addActionListener(this);
         listarPerfilJmenu.addActionListener(this);
         listarUsuariosJmenu.addActionListener(this);
+        listarPorPerfilJMenu.addActionListener(this);
         salvarBanco.addActionListener(this);
         salvarBancoPerfil.addActionListener(this);
         listarEnderecosJmenu.addActionListener(this);
@@ -282,6 +306,15 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         DAOUsuario dao = new DAOUsuario();
         for (Usuario usuario : dao.listarUsuarios()) {
             tabelaModelo.addRow(new Object[]{usuario.getidUsuario(), usuario.getNome(), usuario.getSobrenome()});
+        }
+    }
+
+    public static void consultarPorPerfil(DefaultTableModel tabelaModeloPorPerfil) {
+        tabelaModeloPorPerfil.setNumRows(0);
+        DAOPerfil dao = new DAOPerfil();
+        Usuario usuario = new Usuario();
+        for (Perfil perfil : dao.listarPerfilUsuario()) {
+            tabelaModeloPorPerfil.addRow(new Object[]{usuario.getNome(), usuario.getSobrenome(), perfil.getNome()});
         }
     }
 
@@ -344,11 +377,9 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         } else if (evento.getSource() == salvarBancoPerfil) {
             Perfil perfil = new Perfil();
             DAOPerfil perfilDao = new DAOPerfil();
-
             String perfilNome, perfilDescricao;
             perfilNome = nomePerfil.getText();
             perfilDescricao = descricaoPerfil.getText();
-
             if (perfilDescricao.isEmpty() || perfilNome.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Preencha todos os campos de perfil!", "" +
                         "Não foi possível salvar", JOptionPane.PLAIN_MESSAGE);
@@ -424,7 +455,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             listaUsuarioJframe.setResizable(true);
             listaUsuarioJframe.setVisible(true);
 
-
             //Submenu Listar Enderecos
         } else if (evento.getSource() == listarEnderecosJmenu) {
             pesquisarEndereco(tabelaEndereco);
@@ -441,6 +471,14 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             listarPerfilJframe.setLocationRelativeTo(null);
             listarPerfilJframe.setResizable(false);
             listarPerfilJframe.setVisible(true);
+
+        } else if (evento.getSource() == listarPorPerfilJMenu) {
+            consultarPorPerfil(tabelaListaPorPerfil);
+            listarPorPerfilJframe.setVisible(true);
+            listarPorPerfilJframe.setSize(720, 480);
+            listarPorPerfilJframe.setLocationRelativeTo(null);
+            listarPorPerfilJframe.setResizable(false);
+            listarPorPerfilJframe.setVisible(true);
 
         } else if (evento.getSource() == editarUsuario) {
             Usuario usuario = new Usuario();
