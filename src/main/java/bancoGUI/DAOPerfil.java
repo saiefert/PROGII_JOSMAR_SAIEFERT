@@ -32,7 +32,8 @@ public class DAOPerfil {
             return -1;
         }
     }
-    //listar
+
+    //listar perfil
     public List<Perfil> listarPerfil() {
         List<Perfil> listaParaRetorno = new ArrayList<Perfil>();
         String sql = "SELECT * FROM tb_perfil ORDER BY nome ASC";
@@ -55,6 +56,11 @@ public class DAOPerfil {
         return listaParaRetorno;
     }
 
+
+    //SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario INNER
+    //JOIN tb_perfil ON
+    //tb_usuario.id_usu = tb_perfil.id_perfil
+
     //excluir
     public void excluirPerfil(Perfil perfil) {
         String sql = "DELETE FROM tb_perfil WHERE id_perfil=?";
@@ -70,6 +76,7 @@ public class DAOPerfil {
             ex.printStackTrace();
         }
     }
+
     //atualizar
     public void editarPerfil(Perfil perfil) {
         String sql = "UPDATE tb_perfil SET nome=?, descricao=? WHERE id_perfil=?";

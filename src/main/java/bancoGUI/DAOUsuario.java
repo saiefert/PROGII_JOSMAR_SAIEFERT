@@ -17,13 +17,14 @@ public class DAOUsuario {
     public int salvarUsuario(Usuario usuario) {
         String sql = "INSERT "
                 + "INTO "
-                + "tb_usuario (nome, sobrenome)"
-                + "VALUES (?, ?)";
+                + "tb_usuario (id_usu, nome, sobrenome)"
+                + "VALUES (?, ?, ?)";
         try {
 
             PreparedStatement preparacaoDaInstrucao = conexao.prepareStatement(sql);
-            preparacaoDaInstrucao.setString(1, usuario.getNome());
-            preparacaoDaInstrucao.setString(2, usuario.getSobrenome());
+            preparacaoDaInstrucao.setInt(1, usuario.getIdUsu());
+            preparacaoDaInstrucao.setString(2, usuario.getNome());
+            preparacaoDaInstrucao.setString(3, usuario.getSobrenome());
 
             return preparacaoDaInstrucao.executeUpdate();
 

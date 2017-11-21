@@ -4,6 +4,15 @@ public class Usuario {
     private String nome;
     private String sobrenome;
     private int idUsuario;
+    private int idUsu;
+
+    public int getIdUsu() {
+        return idUsu;
+    }
+
+    public void setIdUsu(int idUsu) {
+        this.idUsu = idUsu;
+    }
 
     public int getidUsuario() {
         return idUsuario;

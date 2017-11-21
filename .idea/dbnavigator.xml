@@ -25,14 +25,17 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="800f446e-5935-4549-926c-85f2e12fab82">
+        <schema name="information_schema" object-types="function, table, view" />
         <schema name="pg_catalog" object-types="function, table, view" />
-        <schema name="public" object-types="function, table, view" />
+        <schema name="public" object-types="column, constraint, function, table, dataset trigger, view" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="800f446e-5935-4549-926c-85f2e12fab82">
-      <console name="PostgreSQL" type="STANDARD"><![CDATA[select * from tb_perfil]]></console>
+      <console name="PostgreSQL" type="STANDARD"><![CDATA[SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario INNER
+JOIN tb_perfil ON
+tb_usuario.id_usu = tb_perfil.id_perfil]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.EditorStateManager">

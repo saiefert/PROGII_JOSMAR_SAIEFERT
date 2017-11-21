@@ -1,5 +1,7 @@
 package bancoGUI;
 
+import jdk.nashorn.internal.scripts.JO;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -49,7 +51,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         barraDeMenu = new JMenuBar();
         this.setJMenuBar(barraDeMenu);
 
-        //Novo > Cadastro
+        //Menu Novo
         barraMenu = new JMenu("Novo");
         cadastroUsuarioMaisEnderecoJmenu = new JMenuItem("Usuário");
         cadastrarPerfilJmenu = new JMenuItem("Perfil");
@@ -59,8 +61,17 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         cadastroUsuarioEnderecoJframe = new JFrame("Cadastror Usuário e endereço");
         cadastroPerfilJframe = new JFrame("Cadastrar perfil");
 
-        //Usuário e Endereço
-        //Usuário
+        //Menu Gerenciar
+        gerenciar = new JMenu("Gerenciar");
+        listarUsuariosJmenu = new JMenuItem("Listar usuários");
+        listarEnderecosJmenu = new JMenuItem("Listar endereços");
+        listarPerfilJmenu = new JMenuItem("Listar Perfil");
+        barraDeMenu.add(gerenciar);
+        gerenciar.add(listarUsuariosJmenu);
+        gerenciar.add(listarEnderecosJmenu);
+        gerenciar.add(listarPerfilJmenu);
+
+       //Usuário Jframe (Cadastro)
         TitledBorder tituloUsuario = new TitledBorder("Usuário");
         salvarBanco = new JButton("Cadastrar");
         JPanel usuarioJpane = new JPanel();
@@ -80,7 +91,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         usuarioJpane.add(selecionarPerfilLabel);
         usuarioJpane.add(perfilOpcoes);
 
-        //Endereço:
+        //Endereço Jframe (Cadastro)
         TitledBorder tituloEndereco = new TitledBorder("Endereço");
         JPanel enderecoJpane = new JPanel(new GridLayout(3, 1));
         enderecoJpane.setBorder(tituloEndereco);
@@ -113,7 +124,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         comple.add(complemento, BorderLayout.SOUTH);
         cadastroUsuarioEnderecoJframe.add(salvarBanco);
 
-        //Perfil
+        //Perfil Jframe(Cadastro)
         TitledBorder tituloPerfil = new TitledBorder("Perfil");
         JPanel perfilJpane = new JPanel();
         perfilJpane.setBorder(tituloPerfil);
@@ -133,15 +144,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         perfilJpane.add(perfilAlertaLabel);
 
 
-        //Menu Gerenciar
-        gerenciar = new JMenu("Gerenciar");
-        listarUsuariosJmenu = new JMenuItem("Listar usuários");
-        listarEnderecosJmenu = new JMenuItem("Listar endereços");
-        listarPerfilJmenu = new JMenuItem("Listar Perfil");
-        barraDeMenu.add(gerenciar);
-        gerenciar.add(listarUsuariosJmenu);
-        gerenciar.add(listarEnderecosJmenu);
-        gerenciar.add(listarPerfilJmenu);
 
         //Tabela Usuário
         listaUsuarioJframe = new JFrame("Consultar usuários");
@@ -227,9 +229,8 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         sobre.setContentAreaFilled(false);
         sobre.setBorderPainted(false);
 
-
         //Coloque o caminho da imagem aqui:
-        ImageIcon imagem = new ImageIcon("C:\\Users\\Josmar\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
+        ImageIcon imagem = new ImageIcon("C:\\Users\\SAIEFERT.FINANCIAL\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
         JLabel imageLabel = new JLabel(imagem);
         this.add(imageLabel);
 
@@ -250,6 +251,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         excluirPerfil.addActionListener(this);
     }
 
+    //Adiciona um perfil do banco de dados no JCombo
     public static void adicionaPerfilJcombo() {
         DAOPerfil dao = new DAOPerfil();
         for (Perfil perfil : dao.listarPerfil()) {
@@ -258,6 +260,23 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         }
     }
 
+    //Pega a opção no JCombobox e relaciona com o id_perfil e o retorna.
+    public static int perfilJcomboListar() {
+        String nome;
+        int idPerfil = 0;
+        DAOPerfil dao = new DAOPerfil();
+        nome = (String) perfilOpcoes.getSelectedItem();
+
+        for (Perfil perfil : dao.listarPerfil()) {
+            if (nome.equals(perfil.getNome())) {
+                return perfil.getIdPerfil();
+            }
+        }
+
+        return idPerfil;
+    }
+
+    //Lista todos os usuários do banco de dados e adiciona linhas a cada usuário
     public static void pesquisarUsuario(DefaultTableModel tabelaModelo) {
         tabelaModelo.setNumRows(0);
         DAOUsuario dao = new DAOUsuario();
@@ -266,6 +285,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         }
     }
 
+    //Lista todos os enderecos e adiciona linhas a cada endereco
     public static void pesquisarEndereco(DefaultTableModel tabelaModeloEndereco) {
         tabelaModeloEndereco.setNumRows(0);
         DAOEndereco daoEndereco = new DAOEndereco();
@@ -275,6 +295,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         }
     }
 
+    //Lista todos os perfils e adiciona linhas a cada perfil
     public static void pesquisarPerfil(DefaultTableModel tabelaModeloPerfil) {
         tabelaModeloPerfil.setNumRows(0);
         DAOPerfil daoPerfil = new DAOPerfil();
@@ -307,6 +328,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Favor, preencha todos os campos!!", "" +
                         "Não foi possível salvar", JOptionPane.PLAIN_MESSAGE);
             } else {
+                usuario.setIdUsu(perfilJcomboListar());
                 usuario.setNome(nome);
                 usuario.setSobrenome(usuarioSobrenome);
                 usuarioDao.salvarUsuario(usuario);
@@ -401,6 +423,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             listaUsuarioJframe.setLocationRelativeTo(null);
             listaUsuarioJframe.setResizable(true);
             listaUsuarioJframe.setVisible(true);
+
 
             //Submenu Listar Enderecos
         } else if (evento.getSource() == listarEnderecosJmenu) {
@@ -501,7 +524,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
                 }
             }
-        }else if (evento.getSource() == editarPerfil) {
+        } else if (evento.getSource() == editarPerfil) {
             Perfil perfil = new Perfil();
             DAOPerfil daoPerfil = new DAOPerfil();
             Object linha;
