@@ -7,10 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class InterfaceGrafica extends JFrame implements ActionListener {
-
-
     private JMenuBar barraDeMenu;
     private JMenu barraMenu, gerenciar, consultar;
     private JMenuItem cadastroUsuarioMaisEnderecoJmenu, cadastrarPerfilJmenu;
@@ -164,8 +161,9 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         tabelaPorPerf.getColumnModel().getColumn(1).setPreferredWidth(100);
         tabelaPorPerf.getColumnModel().getColumn(2).setPreferredWidth(100);
         listarPorPerfilJframe.setLayout(new BorderLayout());
-        JScrollPane barraRolagemPorPerfil = new JScrollPane(tabelaPerf);
+        JScrollPane barraRolagemPorPerfil = new JScrollPane(tabelaPorPerf);
         listarPorPerfilJframe.add(BorderLayout.CENTER, barraRolagemPorPerfil);
+
 
         //Tabela Usuário
         listaUsuarioJframe = new JFrame("Consultar usuários");
@@ -243,7 +241,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         JScrollPane barraRolagemPerfil = new JScrollPane(tabelaPerf);
         listarPerfilJframe.add(BorderLayout.CENTER, barraRolagemPerfil);
         listarPerfilJframe.add(alertaSalvarLabel, BorderLayout.NORTH);
-        listarPorPerfilJframe.add(tabelaPorPerf);
 
         //Botão Sobre
         sobre = new JButton("Sobre");
@@ -284,19 +281,28 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         }
     }
 
+    public static int usuariosContador() {
+        String nome;
+        int idUsuario = 0;
+        DAOUsuario dao = new DAOUsuario();
+
+        for (Usuario usuario : dao.listarUsuarios()) {
+            idUsuario = usuario.getidUsuario();
+        }
+        return idUsuario;
+    }
+
     //Pega a opção no JCombobox e relaciona com o id_perfil e o retorna.
     public static int perfilJcomboListar() {
         String nome;
         int idPerfil = 0;
         DAOPerfil dao = new DAOPerfil();
         nome = (String) perfilOpcoes.getSelectedItem();
-
         for (Perfil perfil : dao.listarPerfil()) {
             if (nome.equals(perfil.getNome())) {
                 return perfil.getIdPerfil();
             }
         }
-
         return idPerfil;
     }
 
@@ -306,15 +312,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         DAOUsuario dao = new DAOUsuario();
         for (Usuario usuario : dao.listarUsuarios()) {
             tabelaModelo.addRow(new Object[]{usuario.getidUsuario(), usuario.getNome(), usuario.getSobrenome()});
-        }
-    }
-
-    public static void consultarPorPerfil(DefaultTableModel tabelaModeloPorPerfil) {
-        tabelaModeloPorPerfil.setNumRows(0);
-        DAOPerfil dao = new DAOPerfil();
-        Usuario usuario = new Usuario();
-        for (Perfil perfil : dao.listarPerfilUsuario()) {
-            tabelaModeloPorPerfil.addRow(new Object[]{usuario.getNome(), usuario.getSobrenome(), perfil.getNome()});
         }
     }
 
@@ -334,6 +331,14 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         DAOPerfil daoPerfil = new DAOPerfil();
         for (Perfil perfil : daoPerfil.listarPerfil()) {
             tabelaModeloPerfil.addRow(new Object[]{perfil.getIdPerfil(), perfil.getNome(), perfil.getDescricao()});
+        }
+    }
+
+    public static void consultarPorPerfil(DefaultTableModel tabelaModeloPorPerfil) {
+        tabelaModeloPorPerfil.setNumRows(0);
+        DAORelacional dao = new DAORelacional();
+        for (PerfilUsuario perfil : dao.listarPerfilUsuario()) {
+            tabelaModeloPorPerfil.addRow(new Object[]{perfil.getNome(), perfil.getSobrenome(), perfil.getNomePerfil()});
         }
     }
 
@@ -387,6 +392,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 perfil.setNome(perfilNome);
                 perfil.setDescricao(perfilDescricao);
                 perfilDao.salvarPerfil(perfil);
+                perfil.getIdPerfil();
                 JOptionPane.showMessageDialog(this, "Perfil\n" + perfilNome +
                         " inserido com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
             }
@@ -502,6 +508,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
             }
         } else if (evento.getSource() == excluirUsuario) {
+
             int reply = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir usuário?" +
                     "", "Atenção!", JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.YES_OPTION) {
@@ -519,7 +526,6 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
                 }
             }
-
         } else if (evento.getSource() == editarEndereco) {
             Endereco endereco = new Endereco();
             DAOEndereco daoEndereco = new DAOEndereco();
@@ -581,21 +587,25 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
             }
         } else if (evento.getSource() == excluirPerfil) {
-            int reply = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir o Perfil?" +
-                    "", "Atenção!", JOptionPane.YES_NO_OPTION);
-            if (reply == JOptionPane.YES_OPTION) {
-                Perfil perfil = new Perfil();
-                DAOPerfil daoPerfil = new DAOPerfil();
-                Object linha;
-                int linhaSelecionada;
-                linhaSelecionada = tabelaPerf.getSelectedRow();
-                if (linhaSelecionada >= 0) {
-                    linha = tabelaPerf.getValueAt(linhaSelecionada, 0);
-                    perfil.setIdPerfil((Integer) linha);
-                    daoPerfil.excluirPerfil(perfil);
-                    pesquisarPerfil(tabelaPerfil);
-                } else {
-                    JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+            if (usuariosContador() != 0) {
+                JOptionPane.showMessageDialog(null, "Não é possível excluir perfil enquanto há usuários cadastrados!");
+            } else {
+                int reply = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir o Perfil?" +
+                        "", "Atenção!", JOptionPane.YES_NO_OPTION);
+                if (reply == JOptionPane.YES_OPTION) {
+                    Perfil perfil = new Perfil();
+                    DAOPerfil daoPerfil = new DAOPerfil();
+                    Object linha;
+                    int linhaSelecionada;
+                    linhaSelecionada = tabelaPerf.getSelectedRow();
+                    if (linhaSelecionada >= 0) {
+                        linha = tabelaPerf.getValueAt(linhaSelecionada, 0);
+                        perfil.setIdPerfil((Integer) linha);
+                        daoPerfil.excluirPerfil(perfil);
+                        pesquisarPerfil(tabelaPerfil);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+                    }
                 }
             }
         }

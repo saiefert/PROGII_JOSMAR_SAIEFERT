@@ -33,8 +33,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="800f446e-5935-4549-926c-85f2e12fab82">
-      <console name="PostgreSQL" type="STANDARD"><![CDATA[SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario 
-INNER JOIN tb_perfil ON tb_usuario.id_usu = tb_perfil.id_perfil]]></console>
+      <console name="PostgreSQL" type="STANDARD"><![CDATA[SELECT nome, sobrenome, nome_perfil FROM tb_usuario INNER
+JOIN tb_perfil ON tb_usuario.id_usu = tb_perfil.id_perfil]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.EditorStateManager">

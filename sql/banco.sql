@@ -17,15 +17,14 @@ CREATE TABLE tb_endereco(
 );
 CREATE TABLE tb_perfil(
     id_perfil SERIAL PRIMARY KEY,
-    nome VARCHAR(255),
+    nome_perfil VARCHAR(255),
     descricao VARCHAR(255)
 );
 
-ALTER TABLE tb_usuario 
-ADD FOREIGN KEY (id_usu) 
+ALTER TABLE tb_usuario
+ADD FOREIGN KEY (id_usu)
 REFERENCES tb_perfil (id_perfil);
 
 ALTER TABLE tb_endereco
-ADD FOREIGN KEY (id_ender) 
+ADD FOREIGN KEY (id_ender)
 REFERENCES tb_usuario (id_usuario);
-

@@ -18,7 +18,7 @@ public class DAOPerfil {
         // Instrução SQL que será executada no banco
         String sql = "INSERT "
                 + "INTO "
-                + "tb_perfil (nome, descricao)"
+                + "tb_perfil (nome_perfil, descricao)"
                 + "VALUES (?, ?)";
         try {
             PreparedStatement preparacaoDaInstrucao = conexao.prepareStatement(sql);
@@ -36,7 +36,7 @@ public class DAOPerfil {
     //listar perfil
     public List<Perfil> listarPerfil() {
         List<Perfil> listaParaRetorno = new ArrayList<Perfil>();
-        String sql = "SELECT * FROM tb_perfil ORDER BY nome ASC";
+        String sql = "SELECT * FROM tb_perfil ORDER BY nome_perfil ASC";
 
         try {
             PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
@@ -45,35 +45,8 @@ public class DAOPerfil {
             while (resultado.next()) {
                 Perfil perfil = new Perfil();
                 perfil.setIdPerfil(resultado.getInt("id_perfil"));
-                perfil.setNome(resultado.getString("nome"));
+                perfil.setNome(resultado.getString("nome_perfil"));
                 perfil.setDescricao(resultado.getString("descricao"));
-                listaParaRetorno.add(perfil);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DAOUsuario.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-        return listaParaRetorno;
-    }
-
-    public List<Perfil> listarPerfilUsuario() {
-        List<Perfil> listaParaRetorno = new ArrayList<Perfil>();
-        String sql = "SELECT nome(tb_usuario), sobrenome, nome(tb_perfil) FROM tb_usuario INNER" +
-                " JOIN tb_perfil ON tb_usuario.id_usu = tb_perfil.id_perfil";
-
-        try {
-            PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
-            ResultSet resultado = instrucaoSelecao.executeQuery();
-
-            while (resultado.next()) {
-                Usuario usuario = new Usuario();
-                Perfil perfil = new Perfil();
-                //perfil.setIdPerfil(resultado.getInt("id_perfil"));
-                perfil.setNome(resultado.getString("nome"));
-                perfil.setDescricao(resultado.getString("descricao"));
-                usuario.setIdUsuario(resultado.getInt("id_usuario"));
-                usuario.setNome(resultado.getString("nome"));
-                usuario.setSobrenome(resultado.getString("sobrenome"));
                 listaParaRetorno.add(perfil);
             }
         } catch (SQLException ex) {
@@ -101,7 +74,7 @@ public class DAOPerfil {
 
     //atualizar
     public void editarPerfil(Perfil perfil) {
-        String sql = "UPDATE tb_perfil SET nome=?, descricao=? WHERE id_perfil=?";
+        String sql = "UPDATE tb_perfil SET nome_perfil=?, descricao=? WHERE id_perfil=?";
 
         try {
             PreparedStatement conectar = conexao.prepareStatement(sql);
