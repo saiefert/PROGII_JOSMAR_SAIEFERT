@@ -13,18 +13,32 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 
     private JMenuBar barraDeMenu;
     private JMenu barraMenu, gerenciar;
-    private JMenuItem cadastroUsuarioEndereco, cadastrarPerfil;
-    private JMenuItem listarUsuarios, buscarEnderecos;
-    private JButton sobre, salvarBanco, salvarBancoPerfil ,editarUsuario, excluirUsuario;
+    private JMenuItem cadastroUsuarioMaisEnderecoJmenu, cadastrarPerfilJmenu;
+    private JMenuItem listarUsuariosJmenu, listarEnderecosJmenu, listarPerfilJmenu;
+    private JButton salvarBancoPerfil, editarUsuario, excluirUsuario, excluirEndereco, editarEndereco, editarPerfil, excluirPerfil;
+    private JButton sobre, salvarBanco;
     private JTextField nomeUsuario, sobrenomeUsuario, logradouro, complemento, bairro, numero, cep, nomePerfil, descricaoPerfil;
     private JLabel sucesso, nomeUsuarioLabel, sobrenomeUsuarioLabel, logradouroLabel, complementoLabel, bairroLabel, numeroLabel, cepLabel;
-    private JLabel nomePerfilLabel, descricaoPerfilLabel, alertaSalvarUsuario;
-    private JFrame cadastroUsuarioEnderecoJframe, cadastroPerfilJframe, buscaUsuarioPainel;
-    private JFrame editaExcluiPainel;
-    private JTable tabela;
-    private JPanel painelEditarExcluir;
-    private JScrollPane perfilOpcoes;
+    private JLabel nomePerfilLabel, descricaoPerfilLabel, alertaSalvarLabel, perfilAlertaLabel, selecionarPerfilLabel;
+    private JFrame cadastroUsuarioEnderecoJframe, cadastroPerfilJframe;
+    private JFrame listarEnderecosJframe, listaUsuarioJframe, listarPerfilJframe;
+    private JTable tabelaUser, tabelaEnd, tabelaPerf;
+    private JPanel painelEditarExcluirUsuario, painelEditarExcluirEndereco, painelEditarExcluirPerfil;
+    private static JComboBox perfilOpcoes;
+
     DefaultTableModel tabelaUsuario = new DefaultTableModel() {
+        public boolean isCellEditable(int row, int column) {
+            return column == 1 || column == 2 ? true : false;
+        }
+    };
+
+    DefaultTableModel tabelaEndereco = new DefaultTableModel() {
+        public boolean isCellEditable(int row, int column) {
+            return column == 1 || column == 2 || column == 3 || column == 4 || column == 5 ? true : false;
+        }
+    };
+
+    DefaultTableModel tabelaPerfil = new DefaultTableModel() {
         public boolean isCellEditable(int row, int column) {
             return column == 1 || column == 2 ? true : false;
         }
@@ -37,15 +51,15 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 
         //Novo > Cadastro
         barraMenu = new JMenu("Novo");
-        cadastroUsuarioEndereco = new JMenuItem("Usuário");
-        cadastrarPerfil = new JMenuItem("Perfil");
+        cadastroUsuarioMaisEnderecoJmenu = new JMenuItem("Usuário");
+        cadastrarPerfilJmenu = new JMenuItem("Perfil");
         barraDeMenu.add(barraMenu);
-        barraMenu.add(cadastroUsuarioEndereco);
-        barraMenu.add(cadastrarPerfil);
+        barraMenu.add(cadastrarPerfilJmenu);
+        barraMenu.add(cadastroUsuarioMaisEnderecoJmenu);
         cadastroUsuarioEnderecoJframe = new JFrame("Cadastror Usuário e endereço");
         cadastroPerfilJframe = new JFrame("Cadastrar perfil");
 
-        //Usuárioc e Endereço
+        //Usuário e Endereço
         //Usuário
         TitledBorder tituloUsuario = new TitledBorder("Usuário");
         salvarBanco = new JButton("Cadastrar");
@@ -53,14 +67,19 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         usuarioJpane.setBorder(tituloUsuario);
         cadastroUsuarioEnderecoJframe.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
         cadastroUsuarioEnderecoJframe.add(usuarioJpane);
-        nomeUsuario = new JTextField(15);
+        nomeUsuario = new JTextField(5);
         nomeUsuarioLabel = new JLabel("Nome:");
-        sobrenomeUsuario = new JTextField(25);
+        sobrenomeUsuario = new JTextField(20);
         sobrenomeUsuarioLabel = new JLabel("Sobrenome:");
         usuarioJpane.add(nomeUsuarioLabel);
         usuarioJpane.add(nomeUsuario);
         usuarioJpane.add(sobrenomeUsuarioLabel);
         usuarioJpane.add(sobrenomeUsuario);
+        perfilOpcoes = new JComboBox();
+        selecionarPerfilLabel = new JLabel("Selecione o perfil");
+        usuarioJpane.add(selecionarPerfilLabel);
+        usuarioJpane.add(perfilOpcoes);
+
         //Endereço:
         TitledBorder tituloEndereco = new TitledBorder("Endereço");
         JPanel enderecoJpane = new JPanel(new GridLayout(3, 1));
@@ -92,10 +111,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         bairroCep.add(cep, BorderLayout.CENTER);
         comple.add(complementoLabel, BorderLayout.SOUTH);
         comple.add(complemento, BorderLayout.SOUTH);
-        cadastroPerfilJframe.add(perfilOpcoes);
         cadastroUsuarioEnderecoJframe.add(salvarBanco);
-
-
 
         //Perfil
         TitledBorder tituloPerfil = new TitledBorder("Perfil");
@@ -104,7 +120,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         cadastroPerfilJframe.add(perfilJpane);
         nomePerfil = new JTextField(15);
         nomePerfilLabel = new JLabel("Nome:");
-        descricaoPerfil = new JTextField(30);
+        descricaoPerfil = new JTextField(25);
         descricaoPerfilLabel = new JLabel("Descrição:");
         perfilJpane.add(nomePerfilLabel);
         perfilJpane.add(nomePerfil);
@@ -112,40 +128,97 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         perfilJpane.add(descricaoPerfil);
         salvarBancoPerfil = new JButton("Cadastrar");
         perfilJpane.add(salvarBancoPerfil);
+        perfilAlertaLabel = new JLabel("Exemplo: Nome [Gerente] Descrição [Administrativo]");
+        perfilAlertaLabel.setForeground(Color.lightGray);
+        perfilJpane.add(perfilAlertaLabel);
 
 
         //Menu Gerenciar
         gerenciar = new JMenu("Gerenciar");
-        listarUsuarios = new JMenuItem("Listar usuários");
-        buscarEnderecos = new JMenuItem("Listar endereços");
+        listarUsuariosJmenu = new JMenuItem("Listar usuários");
+        listarEnderecosJmenu = new JMenuItem("Listar endereços");
+        listarPerfilJmenu = new JMenuItem("Listar Perfil");
         barraDeMenu.add(gerenciar);
-        gerenciar.add(listarUsuarios);
-        gerenciar.add(buscarEnderecos);
+        gerenciar.add(listarUsuariosJmenu);
+        gerenciar.add(listarEnderecosJmenu);
+        gerenciar.add(listarPerfilJmenu);
 
-        //Tabela/Listar
-        buscaUsuarioPainel = new JFrame("Consultar cadastroUsuarioEndereco de usuário");
-
-        tabela = new JTable(tabelaUsuario);
-        tabela.setGridColor(Color.LIGHT_GRAY);
-        tabela.setShowVerticalLines(false);
+        //Tabela Usuário
+        listaUsuarioJframe = new JFrame("Consultar usuários");
+        tabelaUser = new JTable(tabelaUsuario);
+        tabelaUser.setGridColor(Color.LIGHT_GRAY);
+        tabelaUser.setShowVerticalLines(false);
         tabelaUsuario.addColumn("ID");
         tabelaUsuario.addColumn("Nome");
         tabelaUsuario.addColumn("Sobrenome");
-        tabela.getColumnModel().getColumn(0).setPreferredWidth(5);
-        tabela.getColumnModel().getColumn(1).setPreferredWidth(100);
-        tabela.getColumnModel().getColumn(2).setPreferredWidth(250);
+        tabelaUser.getColumnModel().getColumn(0).setPreferredWidth(5);
+        tabelaUser.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaUser.getColumnModel().getColumn(2).setPreferredWidth(250);
         excluirUsuario = new JButton("Excluir");
         editarUsuario = new JButton("Editar");
-        painelEditarExcluir = new JPanel();
-        alertaSalvarUsuario = new JLabel("Dê duplo clique na célula que deseja alterar. Para salvar, selecione a linha que foi alterada e clique no botão 'Editar'.");
-        alertaSalvarUsuario.setForeground(Color.RED);
-        painelEditarExcluir.add(editarUsuario);
-        painelEditarExcluir.add(excluirUsuario);
-        buscaUsuarioPainel.setLayout(new BorderLayout());
-        buscaUsuarioPainel.add(BorderLayout.SOUTH, painelEditarExcluir);
-        JScrollPane barraRolagem = new JScrollPane(tabela);
-        buscaUsuarioPainel.add(BorderLayout.CENTER, barraRolagem);
-        buscaUsuarioPainel.add(alertaSalvarUsuario, BorderLayout.NORTH);
+        painelEditarExcluirUsuario = new JPanel();
+        alertaSalvarLabel = new JLabel("Dê duplo clique na célula que deseja alterar. Para salvar, selecione a linha que foi alterada e clique no botão 'Editar'.");
+        alertaSalvarLabel.setForeground(Color.RED);
+        painelEditarExcluirUsuario.add(editarUsuario);
+        painelEditarExcluirUsuario.add(excluirUsuario);
+        listaUsuarioJframe.setLayout(new BorderLayout());
+        listaUsuarioJframe.add(BorderLayout.SOUTH, painelEditarExcluirUsuario);
+        JScrollPane barraRolagem = new JScrollPane(tabelaUser);
+        listaUsuarioJframe.add(BorderLayout.CENTER, barraRolagem);
+        listaUsuarioJframe.add(alertaSalvarLabel, BorderLayout.NORTH);
+
+        //Tabela Endereço
+        listarEnderecosJframe = new JFrame("Consultar Endereços");
+        tabelaEnd = new JTable(tabelaEndereco);
+        tabelaEnd.setGridColor(Color.LIGHT_GRAY);
+        tabelaEnd.setShowVerticalLines(false);
+        tabelaEndereco.addColumn("ID");
+        tabelaEndereco.addColumn("Logradouro");
+        tabelaEndereco.addColumn("Complemento");
+        tabelaEndereco.addColumn("Bairro");
+        tabelaEndereco.addColumn("Numero");
+        tabelaEndereco.addColumn("Cep");
+        tabelaEnd.getColumnModel().getColumn(0).setPreferredWidth(5);
+        tabelaEnd.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaEnd.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tabelaEnd.getColumnModel().getColumn(3).setPreferredWidth(50);
+        tabelaEnd.getColumnModel().getColumn(4).setPreferredWidth(10);
+        excluirEndereco = new JButton("Excluir");
+        editarEndereco = new JButton("Editar");
+        painelEditarExcluirEndereco = new JPanel();
+        alertaSalvarLabel = new JLabel("Dê duplo clique na célula que deseja alterar. Para salvar, selecione a linha que foi alterada e clique no botão 'Editar'.");
+        alertaSalvarLabel.setForeground(Color.RED);
+        painelEditarExcluirEndereco.add(editarEndereco);
+        painelEditarExcluirEndereco.add(excluirEndereco);
+        listarEnderecosJframe.setLayout(new BorderLayout());
+        listarEnderecosJframe.add(BorderLayout.SOUTH, painelEditarExcluirEndereco);
+        JScrollPane barraRolagemEndereco = new JScrollPane(tabelaEnd);
+        listarEnderecosJframe.add(BorderLayout.CENTER, barraRolagemEndereco);
+        listarEnderecosJframe.add(alertaSalvarLabel, BorderLayout.NORTH);
+
+        //Tabela Perfil
+        listarPerfilJframe = new JFrame("Consultar Endereços");
+        tabelaPerf = new JTable(tabelaPerfil);
+        tabelaPerf.setGridColor(Color.LIGHT_GRAY);
+        tabelaPerf.setShowVerticalLines(false);
+        tabelaPerfil.addColumn("ID");
+        tabelaPerfil.addColumn("Nome");
+        tabelaPerfil.addColumn("Descrição");
+        tabelaPerf.getColumnModel().getColumn(0).setPreferredWidth(5);
+        tabelaPerf.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaPerf.getColumnModel().getColumn(2).setPreferredWidth(100);
+        excluirPerfil = new JButton("Excluir");
+        editarPerfil = new JButton("Editar");
+        painelEditarExcluirPerfil = new JPanel();
+        alertaSalvarLabel = new JLabel("Dê duplo clique na célula que deseja alterar. Para salvar, selecione a linha que foi alterada e clique no botão 'Editar'.");
+        alertaSalvarLabel.setForeground(Color.RED);
+        painelEditarExcluirPerfil.add(editarPerfil);
+        painelEditarExcluirPerfil.add(excluirPerfil);
+        listarPerfilJframe.setLayout(new BorderLayout());
+        listarPerfilJframe.add(BorderLayout.SOUTH, painelEditarExcluirPerfil);
+        JScrollPane barraRolagemPerfil = new JScrollPane(tabelaPerf);
+        listarPerfilJframe.add(BorderLayout.CENTER, barraRolagemPerfil);
+        listarPerfilJframe.add(alertaSalvarLabel, BorderLayout.NORTH);
 
         //Botão Sobre
         sobre = new JButton("Sobre");
@@ -154,30 +227,59 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         sobre.setContentAreaFilled(false);
         sobre.setBorderPainted(false);
 
-        editaExcluiPainel = new JFrame("Editar/Excluir cadastroUsuarioEndereco");
 
         //Coloque o caminho da imagem aqui:
-        ImageIcon imagem = new ImageIcon("C:\\Users\\SAIEFERT.FINANCIAL\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
+        ImageIcon imagem = new ImageIcon("C:\\Users\\Josmar\\IdeaProjects\\PROGII_JOSMAR_SAIEFERT\\img\\logo.png");
         JLabel imageLabel = new JLabel(imagem);
         this.add(imageLabel);
 
         //Listerners
-        cadastroUsuarioEndereco.addActionListener(this);
-        cadastrarPerfil.addActionListener(this);
-        listarUsuarios.addActionListener(this);
+        cadastroUsuarioMaisEnderecoJmenu.addActionListener(this);
+        cadastrarPerfilJmenu.addActionListener(this);
+        listarPerfilJmenu.addActionListener(this);
+        listarUsuariosJmenu.addActionListener(this);
         salvarBanco.addActionListener(this);
         salvarBancoPerfil.addActionListener(this);
-        buscarEnderecos.addActionListener(this);
+        listarEnderecosJmenu.addActionListener(this);
         sobre.addActionListener(this);
         editarUsuario.addActionListener(this);
         excluirUsuario.addActionListener(this);
+        editarEndereco.addActionListener(this);
+        excluirEndereco.addActionListener(this);
+        editarPerfil.addActionListener(this);
+        excluirPerfil.addActionListener(this);
     }
 
-    public static void pesquisar(DefaultTableModel tabelaModelo) {
+    public static void adicionaPerfilJcombo() {
+        DAOPerfil dao = new DAOPerfil();
+        for (Perfil perfil : dao.listarPerfil()) {
+            perfilOpcoes.removeItem(perfil.getNome());
+            perfilOpcoes.addItem(perfil.getNome());
+        }
+    }
+
+    public static void pesquisarUsuario(DefaultTableModel tabelaModelo) {
         tabelaModelo.setNumRows(0);
         DAOUsuario dao = new DAOUsuario();
         for (Usuario usuario : dao.listarUsuarios()) {
             tabelaModelo.addRow(new Object[]{usuario.getidUsuario(), usuario.getNome(), usuario.getSobrenome()});
+        }
+    }
+
+    public static void pesquisarEndereco(DefaultTableModel tabelaModeloEndereco) {
+        tabelaModeloEndereco.setNumRows(0);
+        DAOEndereco daoEndereco = new DAOEndereco();
+        for (Endereco endereco : daoEndereco.listarEnderecos()) {
+            tabelaModeloEndereco.addRow(new Object[]{endereco.getIdEndereco(), endereco.getLogradouro(), endereco.getComplemento()
+                    , endereco.getBairro(), endereco.getNumero(), endereco.getCep()});
+        }
+    }
+
+    public static void pesquisarPerfil(DefaultTableModel tabelaModeloPerfil) {
+        tabelaModeloPerfil.setNumRows(0);
+        DAOPerfil daoPerfil = new DAOPerfil();
+        for (Perfil perfil : daoPerfil.listarPerfil()) {
+            tabelaModeloPerfil.addRow(new Object[]{perfil.getIdPerfil(), perfil.getNome(), perfil.getDescricao()});
         }
     }
 
@@ -200,8 +302,9 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             enderecoCep = cep.getText();
             usuarioSobrenome = sobrenomeUsuario.getText();
 
-            if (usuarioSobrenome.isEmpty() || nome.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Preencha todos os campos de usuário!", "" +
+            if (usuarioSobrenome.isEmpty() || nome.isEmpty() || enderecoLogradouro.isEmpty() || enderecoBairro.isEmpty() ||
+                    enderecoNumero.isEmpty() || enderecoCep.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Favor, preencha todos os campos!!", "" +
                         "Não foi possível salvar", JOptionPane.PLAIN_MESSAGE);
             } else {
                 usuario.setNome(nome);
@@ -216,7 +319,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Usuário\n" + nome + " " +
                         usuarioSobrenome + " incluído com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
             }
-        }else if (evento.getSource() == salvarBancoPerfil) {
+        } else if (evento.getSource() == salvarBancoPerfil) {
             Perfil perfil = new Perfil();
             DAOPerfil perfilDao = new DAOPerfil();
 
@@ -231,8 +334,8 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 perfil.setNome(perfilNome);
                 perfil.setDescricao(perfilDescricao);
                 perfilDao.salvarPerfil(perfil);
-                JOptionPane.showMessageDialog(this, "Usuário\n" + perfilNome +
-                        " incluído com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Perfil\n" + perfilNome +
+                        " inserido com sucesso!", "Cadastrado!", JOptionPane.PLAIN_MESSAGE);
             }
         }
         //Botão Sobre
@@ -246,36 +349,75 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                     "", "Sobre", JOptionPane.PLAIN_MESSAGE);
 
             //Submenu cadastrar
-        } else if (evento.getSource() == cadastroUsuarioEndereco) {
+        } else if (evento.getSource() == cadastroUsuarioMaisEnderecoJmenu) {
             cadastroUsuarioEnderecoJframe.setVisible(true);
             cadastroUsuarioEnderecoJframe.setSize(680, 480);
             cadastroUsuarioEnderecoJframe.setLocationRelativeTo(null);
             cadastroUsuarioEnderecoJframe.setResizable(false);
             cadastroUsuarioEnderecoJframe.setVisible(true);
+            adicionaPerfilJcombo();
+            int contador = 0;
+            DAOPerfil dao = new DAOPerfil();
+            for (Perfil perfil : dao.listarPerfil()) {
+                contador = perfilOpcoes.getItemCount();
+            }
+            if (contador == 0) {
+                nomeUsuario.setEditable(false);
+                sobrenomeUsuario.setEditable(false);
+                logradouro.setEditable(false);
+                cep.setEditable(false);
+                numero.setEditable(false);
+                complemento.setEditable(false);
+                bairro.setEditable(false);
+                salvarBanco.setEnabled(false);
+                perfilOpcoes.setEnabled(false);
+                JOptionPane.showMessageDialog(null, "Ops, detectei que não há nenhum perfil cadastrado." +
+                        " \nCada usuário precisa estar em pelo menos um perfil. Para cadastrar um perfil, vá no menu Novo > Perfil");
+            } else {
+                nomeUsuario.setEditable(true);
+                sobrenomeUsuario.setEditable(true);
+                logradouro.setEditable(true);
+                cep.setEditable(true);
+                numero.setEditable(true);
+                complemento.setEditable(true);
+                bairro.setEditable(true);
+                salvarBanco.setEnabled(true);
+                perfilOpcoes.setEnabled(true);
+            }
 
             //Submenu Consultar
-        } else if (evento.getSource() == cadastrarPerfil) {
+        } else if (evento.getSource() == cadastrarPerfilJmenu) {
             cadastroPerfilJframe.setVisible(true);
             cadastroPerfilJframe.setSize(680, 480);
             cadastroPerfilJframe.setLocationRelativeTo(null);
             cadastroPerfilJframe.setResizable(false);
             cadastroPerfilJframe.setVisible(true);
-            //submenu cadastrar perfil
-        } else if (evento.getSource() == listarUsuarios) {
-            pesquisar(tabelaUsuario);
-            buscaUsuarioPainel.setVisible(true);
-            buscaUsuarioPainel.setSize(700, 480);
-            buscaUsuarioPainel.setLocationRelativeTo(null);
-            buscaUsuarioPainel.setResizable(true);
-            buscaUsuarioPainel.setVisible(true);
 
-            //Submenu Editar/Excluir
-        } else if (evento.getSource() == buscarEnderecos) {
-            editaExcluiPainel.setVisible(true);
-            editaExcluiPainel.setSize(720, 480);
-            editaExcluiPainel.setLocationRelativeTo(null);
-            editaExcluiPainel.setResizable(false);
-            editaExcluiPainel.setVisible(true);
+            //submenu Listar usuários
+        } else if (evento.getSource() == listarUsuariosJmenu) {
+            pesquisarUsuario(tabelaUsuario);
+            listaUsuarioJframe.setVisible(true);
+            listaUsuarioJframe.setSize(700, 480);
+            listaUsuarioJframe.setLocationRelativeTo(null);
+            listaUsuarioJframe.setResizable(true);
+            listaUsuarioJframe.setVisible(true);
+
+            //Submenu Listar Enderecos
+        } else if (evento.getSource() == listarEnderecosJmenu) {
+            pesquisarEndereco(tabelaEndereco);
+            listarEnderecosJframe.setVisible(true);
+            listarEnderecosJframe.setSize(720, 480);
+            listarEnderecosJframe.setLocationRelativeTo(null);
+            listarEnderecosJframe.setResizable(false);
+            listarEnderecosJframe.setVisible(true);
+
+        } else if (evento.getSource() == listarPerfilJmenu) {
+            pesquisarPerfil(tabelaPerfil);
+            listarPerfilJframe.setVisible(true);
+            listarPerfilJframe.setSize(720, 480);
+            listarPerfilJframe.setLocationRelativeTo(null);
+            listarPerfilJframe.setResizable(false);
+            listarPerfilJframe.setVisible(true);
 
         } else if (evento.getSource() == editarUsuario) {
             Usuario usuario = new Usuario();
@@ -284,11 +426,11 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
             Object nomeModificado;
             Object sobrenomeModificado;
             int linhaSelecionada;
-            linhaSelecionada = tabela.getSelectedRow();
+            linhaSelecionada = tabelaUser.getSelectedRow();
             if (linhaSelecionada >= 0) {
-                linha = tabela.getValueAt(linhaSelecionada, 0);
-                nomeModificado = tabela.getValueAt(linhaSelecionada, 1);
-                sobrenomeModificado = tabela.getValueAt(linhaSelecionada, 2);
+                linha = tabelaUser.getValueAt(linhaSelecionada, 0);
+                nomeModificado = tabelaUser.getValueAt(linhaSelecionada, 1);
+                sobrenomeModificado = tabelaUser.getValueAt(linhaSelecionada, 2);
                 usuario.setIdUsuario((Integer) linha);
                 usuario.setNome((String) nomeModificado);
                 usuario.setSobrenome((String) sobrenomeModificado);
@@ -306,20 +448,97 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
                 DAOUsuario daoUsuario = new DAOUsuario();
                 Object linha;
                 int linhaSelecionada;
-                linhaSelecionada = tabela.getSelectedRow();
+                linhaSelecionada = tabelaUser.getSelectedRow();
                 if (linhaSelecionada >= 0) {
-                    linha = tabela.getValueAt(linhaSelecionada, 0);
+                    linha = tabelaUser.getValueAt(linhaSelecionada, 0);
                     usuario.setIdUsuario((Integer) linha);
                     daoUsuario.excluirUsuario(usuario);
+                    pesquisarUsuario(tabelaUsuario);
                 } else {
                     JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
                 }
-
             }
 
+        } else if (evento.getSource() == editarEndereco) {
+            Endereco endereco = new Endereco();
+            DAOEndereco daoEndereco = new DAOEndereco();
+            Object linha;
+            Object logradouro, complemento, bairro, numero, cep;
+            int linhaSelecionada;
+            linhaSelecionada = tabelaEnd.getSelectedRow();
+            if (linhaSelecionada >= 0) {
+                linha = tabelaEnd.getValueAt(linhaSelecionada, 0);
+                logradouro = tabelaEnd.getValueAt(linhaSelecionada, 1);
+                complemento = tabelaEnd.getValueAt(linhaSelecionada, 2);
+                bairro = tabelaEnd.getValueAt(linhaSelecionada, 3);
+                numero = tabelaEnd.getValueAt(linhaSelecionada, 4);
+                cep = tabelaEnd.getValueAt(linhaSelecionada, 5);
+                endereco.setIdEndereco((Integer) linha);
+                endereco.setLogradouro((String) logradouro);
+                endereco.setComplemento((String) complemento);
+                endereco.setBairro((String) bairro);
+                endereco.setNumero((String) numero);
+                endereco.setCep((String) cep);
+                daoEndereco.editarEndereco(endereco);
+            } else {
+                JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+            }
+        } else if (evento.getSource() == excluirEndereco) {
+            int reply = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir endereço?" +
+                    "", "Atenção!", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                Endereco endereco = new Endereco();
+                DAOEndereco daoEndereco = new DAOEndereco();
+                Object linha;
+                int linhaSelecionada;
+                linhaSelecionada = tabelaEnd.getSelectedRow();
+                if (linhaSelecionada >= 0) {
+                    linha = tabelaEnd.getValueAt(linhaSelecionada, 0);
+                    endereco.setIdEndereco((Integer) linha);
+                    daoEndereco.excluirEndereco(endereco);
+                    pesquisarEndereco(tabelaEndereco);
+                } else {
+                    JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+                }
+            }
+        }else if (evento.getSource() == editarPerfil) {
+            Perfil perfil = new Perfil();
+            DAOPerfil daoPerfil = new DAOPerfil();
+            Object linha;
+            Object nome, descricao;
+            int linhaSelecionada;
+            linhaSelecionada = tabelaPerf.getSelectedRow();
+            if (linhaSelecionada >= 0) {
+                linha = tabelaPerf.getValueAt(linhaSelecionada, 0);
+                nome = tabelaPerf.getValueAt(linhaSelecionada, 1);
+                descricao = tabelaPerf.getValueAt(linhaSelecionada, 2);
+                perfil.setIdPerfil((Integer) linha);
+                perfil.setNome((String) nome);
+                perfil.setDescricao((String) descricao);
+                daoPerfil.editarPerfil(perfil);
+            } else {
+                JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+            }
+        } else if (evento.getSource() == excluirPerfil) {
+            int reply = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir o Perfil?" +
+                    "", "Atenção!", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                Perfil perfil = new Perfil();
+                DAOPerfil daoPerfil = new DAOPerfil();
+                Object linha;
+                int linhaSelecionada;
+                linhaSelecionada = tabelaPerf.getSelectedRow();
+                if (linhaSelecionada >= 0) {
+                    linha = tabelaPerf.getValueAt(linhaSelecionada, 0);
+                    perfil.setIdPerfil((Integer) linha);
+                    daoPerfil.excluirPerfil(perfil);
+                    pesquisarPerfil(tabelaPerfil);
+                } else {
+                    JOptionPane.showMessageDialog(null, "É necesário selecionar uma linha.");
+                }
+            }
         }
     }
 }
-
 
 

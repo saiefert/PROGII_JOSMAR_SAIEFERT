@@ -1,5 +1,6 @@
 package bancoGUI;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,10 +21,7 @@ public class DAOPerfil {
                 + "tb_perfil (nome, descricao)"
                 + "VALUES (?, ?)";
         try {
-            // Objeto PreparedStatement é um objeto que prepara a instrução de sql
-            // ou seja, preenche os valores
             PreparedStatement preparacaoDaInstrucao = conexao.prepareStatement(sql);
-            //De acordo com a posicao do ponto de interrogacao na SQL e o tipo do dado
             preparacaoDaInstrucao.setString(1, perfil.getNome());
             preparacaoDaInstrucao.setString(2, perfil.getDescricao());
 
@@ -37,7 +35,7 @@ public class DAOPerfil {
     //listar
     public List<Perfil> listarPerfil() {
         List<Perfil> listaParaRetorno = new ArrayList<Perfil>();
-        String sql = "SELECT * FROM tb_perfil";
+        String sql = "SELECT * FROM tb_perfil ORDER BY nome ASC";
 
         try {
             PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
@@ -45,6 +43,7 @@ public class DAOPerfil {
 
             while (resultado.next()) {
                 Perfil perfil = new Perfil();
+                perfil.setIdPerfil(resultado.getInt("id_perfil"));
                 perfil.setNome(resultado.getString("nome"));
                 perfil.setDescricao(resultado.getString("descricao"));
                 listaParaRetorno.add(perfil);
@@ -57,11 +56,35 @@ public class DAOPerfil {
     }
 
     //excluir
-    public boolean excluirPerfil(Perfil perfil) {
-        return false;
+    public void excluirPerfil(Perfil perfil) {
+        String sql = "DELETE FROM tb_perfil WHERE id_perfil=?";
+
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setInt(1, perfil.getIdPerfil());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Perfil removido com sucesso");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
     //atualizar
-    public boolean atualizarPerfil(Perfil perfil) {
-        return false;
+    public void editarPerfil(Perfil perfil) {
+        String sql = "UPDATE tb_perfil SET nome=?, descricao=? WHERE id_perfil=?";
+
+        try {
+            PreparedStatement conectar = conexao.prepareStatement(sql);
+            conectar.setString(1, perfil.getNome());
+            conectar.setString(2, perfil.getDescricao());
+            conectar.setInt(3, perfil.getIdPerfil());
+            conectar.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Perfil alterado com sucesso!");
+            conectar.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

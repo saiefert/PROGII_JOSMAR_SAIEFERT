@@ -39,19 +39,23 @@ public class DAOEndereco {
         }
     }
     //listar
-    public List<Usuario> listarUsuarios() {
-        List<Usuario> listaParaRetorno = new ArrayList<Usuario>();
-        String sql = "SELECT * FROM tb_usuario";
+    public List<Endereco> listarEnderecos() {
+        List<Endereco> listaParaRetorno = new ArrayList<Endereco>();
+        String sql = "SELECT * FROM tb_endereco";
 
         try {
             PreparedStatement instrucaoSelecao = conexao.prepareStatement(sql);
             ResultSet resultado = instrucaoSelecao.executeQuery();
 
             while (resultado.next()) {
-                Usuario usuario = new Usuario();
-                usuario.setNome(resultado.getString("nome"));
-                usuario.setSobrenome(resultado.getString("Sobrenome"));
-                listaParaRetorno.add(usuario);
+                Endereco endereco = new Endereco();
+                endereco.setIdEndereco(resultado.getInt("id_endereco"));
+                endereco.setLogradouro(resultado.getString("logradouro"));
+                endereco.setComplemento(resultado.getString("complemento"));
+                endereco.setBairro(resultado.getString("bairro"));
+                endereco.setNumero(resultado.getString("numero"));
+                endereco.setCep(resultado.getString("cep"));
+                listaParaRetorno.add(endereco);
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAOUsuario.class.getName()).log(Level.SEVERE, null, ex);
@@ -62,7 +66,7 @@ public class DAOEndereco {
 
     //excluir
     public void excluirEndereco(Endereco endereco) {
-        String sql = "DELETE FROM tb_usuario WHERE id_usuario=?";
+        String sql = "DELETE FROM tb_endereco WHERE id_endereco=?";
 
         try {
             PreparedStatement conectar = conexao.prepareStatement(sql);
@@ -76,16 +80,18 @@ public class DAOEndereco {
         }
     }
     //atualizar
-    public void editarUsuario(Usuario usuario) {
-        String sql = "UPDATE tb_usuario SET nome=?, sobrenome=? WHERE id_usuario=?";
-
+    public void editarEndereco(Endereco endereco) {
+        String sql = "UPDATE tb_endereco SET logradouro=?, complemento=?, bairro=?, numero=?, cep=? WHERE id_endereco=?";
         try {
             PreparedStatement conectar = conexao.prepareStatement(sql);
-            conectar.setString(1, usuario.getNome());
-            conectar.setString(2, usuario.getSobrenome());
-            conectar.setInt(3, usuario.getidUsuario());
+            conectar.setString(1, endereco.getLogradouro());
+            conectar.setString(2, endereco.getComplemento());
+            conectar.setString(3, endereco.getBairro());
+            conectar.setString(4, endereco.getNumero());
+            conectar.setString(5, endereco.getCep());
+            conectar.setInt(6, endereco.getIdEndereco());
             conectar.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Usuário alterado com sucesso!");
+            JOptionPane.showMessageDialog(null, "Endereco alterado com sucesso!");
             conectar.close();
 
         } catch (SQLException ex) {
